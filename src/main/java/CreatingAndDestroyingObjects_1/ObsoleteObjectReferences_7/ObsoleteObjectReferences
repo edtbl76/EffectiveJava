@@ -1,0 +1,142 @@
+# ITEM 7: Eliminate Obsolete Object References
+- Despite the use of GC, memory management is STILL 
+a consideration in Java (even if it is to a much
+lesser degree than in C/C++)
+
+NOTE:<br> 
+Technically speaking, GC'd languages don't have memory leaks, they have
+"UNINTENTIONAL OBJECT RETENTIONS"
+- even only a few UORs can result in MANY MANY objects from being properly GC'd
+w/ considerably large impact on performance. 
+
+
+
+## MEMORY LEAK (UOR) EXAMPLE
+
+ 
+    EX:
+        public class Stack {
+            private Object[] elements;
+            private int size = 0;
+            
+            private static final int DEFAULT_INIT_CAPACITY = 16;
+            
+            public Stack() {
+                elements = new Object[DEFAULT_INIT_CAPACITY];
+            }
+            
+            public void push(Object e) {
+                ensureCapacity();
+                elements[size++] = e;
+            }
+            
+            public Object pop() {
+                if (size == 0)
+                    throw new EmptyStackExceptoin();
+                return elements[--size];
+            }
+            
+            private void ensureCapacity() {
+                if (elements.length == size)
+                    elements = Arrays.copyOf(elements, 2 * size + 1);
+            }
+        
+        }
+        
+        
+NOTE: 
+- the symptoms of the memory leak may be
+    - disk paging
+    - program failure w/ OutOfMemoryError
+    
+### WHERE IS THE LEAK (UOR) ? 
+- if a stack grows + shrinks, the objects that were pop()'d off of the stack are
+never GC'd, even if the stack has no more references to them. 
+    - STACKS maintain OBSOLETE REFERENCES to those objects.
+        - OBSOLETE REFERENCE = a reference that will never be dereferenced again. 
+        - ANY reference outside of the "ACTIVE PORTION" of the element array are
+        considered obsolete. 
+        - the "ACTIVE PORTION" consists of the elements whose index is < size. 
+         
+
+## HOW TO FIX
+- simple => NULL OUT REFERENCES when they become obsolete.
+    - if obsolete references are accidentally dereferenced, it results in 
+    FAIL FAST NPE.
+        - while, it is loud, it is immediate
+        - better than silently doing the wrong thing.
+    
+    
+    EX:
+        public Object pop() {
+            if (size == 0)
+                throw new EmptyStackException();
+            Object result = elements[--size]
+            elements[size] = null;              <---- ELIMINATE OBSOLETE REFERENCE
+        }
+        
+
+## WHEN TO USE NULL OBJECT REFERENCES
+- avoid overusing (i.e. don't null out every object reference as soon as program
+ is finished using them)
+- BEST PRACTICE
+    - obsolete references should be eliminated by letting the variable that
+    contained the reference fall out of scope. 
+    - this occurs NATURALLY if you define each variable in the narrowest 
+    possible scope
+    
+- why is Stack susceptible to UORs? 
+    - it manages its own memory
+    - the STORAGE POOL consists of the elements of the ELEMENTS array 
+        - (the object ref cells, not the objects themselves)
+        - the elements in the ACTIVE PORTION of the array are ALLOCATED
+        - elements in the REMAINDER (non-active) are FREE
+    - the GC has no way of differentiating between ACTIVE or NON-ACTIVE
+        - therefore, all object references in ELEMENTS array are 
+        equally valid.
+        - only DEV/PROGRAMMER knows that the inactive portion is obsolete. 
+    - we NULL OUT the references to inform the GC that they are obsolete
+
+GENERAL RULE:
+- whenever a class MANAGES ITS OWN MEMORY, the dev/programmer should be aware
+of memory leaks/unintentional object references
+
+## OTHER SOURCES OF MEMORY LEAKS
+
+### CACHES
+- object references that have been cached are easily forgotten
+    - If not invalidated properly (or ever), they can quickly become stale
+    
+FIX 1:  
+- use WeakHashMap for cache:
+    - cache must be impl'd for which the ENTRY is relevant EXACTLY as long as there are 
+    refs to its KEY outside of the cache. 
+    - in this case, ENTRIES are removed automagically after they become obsolete. 
+    
+NOTE:
+    - WeakHashMap ONLY works if the desired lifetime of the cache ENTRIES is determined by
+    EXTERNAL REFS to the KEY, NOT THE VALUE. 
+
+
+FIX 2:
+Unfortunately, lifetime of a CACHE ENTRY is usually not well defined. 
+    - entries become less valuable over time. 
+    - (WeakHashMap isn't useful here)
+
+- Solution is a periodic cleansing/invalidation of stale ENTRIES
+    - often done by background thread (ScheduledThreadPoolExecutor ?)
+    - can also be done as a side effect each time a new ENTRY is pushed onto the CACHE.
+        - LinkedHashMap can do this w/ removeEldestEntry() method.
+    - complex/sophisticated use cases may require 
+        - java.lang.ref
+        
+### LISTENERS and CALLBACKS
+if an API allows clients to register callbacks, those callbacks may accumulate (and get style) 
+if not explicitly deregistered. 
+- for "up and running all the time" systems, these leaks can take a long time to show up.
+
+FIX 1:
+- guarantee GC of callbacks by only storing WEAK REFERENCES to the callbacks.
+    - EX: (i.e. storing them as keys in a WeakHashMap)
+    
+

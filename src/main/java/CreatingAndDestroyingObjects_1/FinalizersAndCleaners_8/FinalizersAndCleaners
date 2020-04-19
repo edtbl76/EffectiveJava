@@ -1,0 +1,124 @@
+# Item 8: Avoid Finalizers And Cleaners
+
+FINALIZERS ARE UNPREDICTABLE, OFTEN DANGEROUS, AND GENERALLY UNNECESSARY
+- erratic behavior
+- poor performance
+- portablity problems
+- deprecated in Java 9
+
+CLEANERS ARE LESS DANGEROUS, BUT STILL UNPREDICTABLE, SLOW AND GENERALLY UNNECESSARY
+- introduced in Java 9 to replace finalizers
+- these are not a facsimile of C++ destructors
+    - destructors are the appropriate way to reclaim resources
+    associated w/ an object in C++
+        - they are also used to reclaim other NON-MEMORY resources
+    - in Java, this task is performed by the GC
+        - but the NON-MEMORY resources are handled w/ a try-with-resources or try-finally block
+    
+## TARDY FINALIZATION and UNGUARANTEED EXECUTION 
+1 . Finalizers/Cleaners both run in the background under the control
+of the GC
+    - no guarantee of promptness -> TARDY FINALIZATION
+    - no guarantee that they will run AT ALL.
+    
+TARDY FINALIZATION
+- no guarantee that they will be executed when you need them to be
+- can take "a long" time between the time when an object is 
+    deemed unreachable, and when the finalizer/cleaner actually runs
+- NO TIME CRITICAL CODE should live in a finalizer/cleaner
+    - i.e. closing files/sockets/connections etc.
+
+PERSISTENT STATE
+- since there is no guarantee that the finalizers/cleaners will
+run it is possible that they won't be executed against some
+unreachable objects
+- THEY SHOULD NEVER BE RELIED UPON TO UPDATE PERSISTENT STATE
+    - releasing persistent locks on shared resources
+    - can shut down distributed system. 
+    
+### DECEPTIVE METHODS YOU SHOULD NEVER USE
+- System.gc
+- System.runFinalization
+- System.runFinalizersOnExit
+- Runtime.runFinalizersOnExt
+
+## EXCEPTIONS
+Finalizers ignore uncaught exceptions thrown during finalization
+- finalization terminates (probably without finishing its
+intended tasks)
+- not even a DAMN WARNING
+- leaves other objects in a corrupt state
+
+NOTE: <br> 
+normal behavior for uncaught exceptions is to terminate
+the thread and print a stack trace. 
+
+NOTE: <br> 
+Cleaners don't have this issue as libs using cleaners have control
+over the executing thread. 
+
+## PERFORMANCE PENALTIES
+- time from creating AutoCloseable object to closing it w/ 
+try-with-resources block ~ 12ns
+- finalizers that do the same thing ~ 550ns
+- cleaners are only slightly more efficient than finalizers
+    (~450 - 500 ns)
+
+This is because finalizers inhibit GC rather than support it. 
+
+## SECURITY ISSUES
+FINALIZER ATTACKS
+- if an exception is thrown from a constructor or its 
+serialization equivalents (readObject() and readResolve() methods)
+    - the finalizer of a MALICIOUS CLASS can run on the partially
+    constructed object that should have "died on the vine"
+    - the bad finalizer records a reference to the object in the static field, preventing it
+    from being GC'd
+    - once malformed object has been recorded, all you have to do is invoke 
+    arbitrary methods on this object that shouldn't have been allowed to exist in the first
+    place.
+    
+NOTE:<br>
+Normal behavior for throwing an exception from a constructor is to prevent that object from
+coming into existence. 
+- final classes are IMMUNE to FINALIZER ATTACKS, because no one can subclass a final class. 
+
+SOLUTION:
+- to protect NONFINAL classes from a finalizer attacks, write a final finalize method that
+does nothing.
+
+## BEST PRACTICES
+If you have a class that encapsulates resources that require termination
+- do NOT user finalizers or cleaners
+
+AUTOCLOSEABLE:<br>
+- have class implement AutoCloseable interface
+- require clients to invoke the close() method on each instance when its no longer needed
+- (this is usually done w/ a try-with-resources) to ensure termination even in the face
+of exceptions.
+- NOTE: instance MUST keep track of whether or not its been closed. 
+    - close() method must record in a field that the object is no longer valid
+    - other methods have to check this field
+        - throw IllegalStateException if other methods attempt to access field after the
+        object has been closed. 
+    
+## ACTUAL POSITIVE USES FOR FINALIZERS/CLEANERS
+1. safety net in case the owner of a resource fails to call its close() method.
+    - despite the fact that there is a poor guarantee that the finalizer/cleaner will run, 
+    it is "better late than never" if the client fails to do so.
+    - consider the cost HEAVILY before implementing this safety net. 
+1. managing termination of objects w/ NATIVE PEERS
+    - NATIVE PEER (native, non-Java, object to which a normal object delegates via native methods)
+    - GC doesn't know about NATIVE OBJECTS, so it can't reclaim it when the Java peer is
+    reclaimed. 
+        - FINALIZER/CLEANER may be acceptable assuming that
+            1. performance is acceptable
+            1. native peer has no CRITICAL RESOURCES
+        - If these conditions aren't acceptable
+            - use a close() method w/ AutoCloseable.
+
+
+CLASSES WITH FINALIZER SAFETY NETS
+- FileInputStream
+- FileOutputStream
+- ThreadPoolExecutor
