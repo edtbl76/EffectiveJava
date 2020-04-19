@@ -1,6 +1,6 @@
-package CreatingAndDestroyingObjects_1.Builder_2;
+package CreatingAndDestroyingObjects_1.Builder_2.Builder;
 
-public class NutritionFactsWithBuilder {
+public class NutritionFacts {
 
     // Nutrition Facts
     private final int servingSize;          // (mL)             required
@@ -24,7 +24,7 @@ public class NutritionFactsWithBuilder {
         - The parent class (BuilderPattern in this case) has ALL final (immutable) attributes.
            Thread Safe!
      */
-    private NutritionFactsWithBuilder(Builder builder) {
+    private NutritionFacts(Builder builder) {
         servingSize = builder.servingSize;
         servings = builder.servings;
         calories = builder.calories;
@@ -70,8 +70,8 @@ public class NutritionFactsWithBuilder {
         }
 
         // build() method.
-        public NutritionFactsWithBuilder build() {
-            return new NutritionFactsWithBuilder(this);
+        public NutritionFacts build() {
+            return new NutritionFacts(this);
         }
     }
 

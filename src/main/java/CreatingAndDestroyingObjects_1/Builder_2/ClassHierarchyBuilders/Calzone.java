@@ -1,14 +1,14 @@
-package CreatingAndDestroyingObjects_1.Builder_2;
+package CreatingAndDestroyingObjects_1.Builder_2.ClassHierarchyBuilders;
 
-public class CHConcreteCalzone extends ClassHierarchyPizza {
+public class Calzone extends Pizza {
     private final boolean sauceInside;
 
-    private CHConcreteCalzone(Builder builder) {
+    private Calzone(Builder builder) {
         super(builder);
         sauceInside = builder.sauceInside;
     }
 
-    public static class Builder extends ClassHierarchyPizza.Builder<Builder> {
+    public static class Builder extends Pizza.Builder<Builder> {
         private boolean sauceInside = false; // default
 
         public Builder withSauceInside() {
@@ -17,8 +17,8 @@ public class CHConcreteCalzone extends ClassHierarchyPizza {
         }
 
         @Override
-        public CHConcreteCalzone build() {
-            return new CHConcreteCalzone(this);
+        public Calzone build() {
+            return new Calzone(this);
         }
 
         @Override

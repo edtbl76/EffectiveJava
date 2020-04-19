@@ -1,6 +1,6 @@
-package CreatingAndDestroyingObjects_1.Builder_2;
+package CreatingAndDestroyingObjects_1.Builder_2.JavaBeansPattern;
 
-public class NutritionFactsWithJavaBeans {
+public class NutritionFacts {
 
     // Nutrition Facts
     private int servingSize     = -1;   // required; no default value
@@ -10,7 +10,7 @@ public class NutritionFactsWithJavaBeans {
     private int sodium          = 0;
     private int carbohydrate    = 0;
 
-    public NutritionFactsWithJavaBeans() {
+    public NutritionFacts() {
     }
 
     public int getServingSize() {

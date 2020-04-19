@@ -1,10 +1,10 @@
-package CreatingAndDestroyingObjects_1.Builder_2;
+package CreatingAndDestroyingObjects_1.Builder_2.ClassHierarchyBuilders;
 
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class ClassHierarchyPizza {
+public abstract class Pizza {
 
     public enum Topping { PEPPERONI, HAM, MUSHROOM, ONION, PEPPER, SAUSAGE, PINEAPPLE }
     final Set<Topping> toppings;
@@ -23,13 +23,13 @@ public abstract class ClassHierarchyPizza {
             return self();
         }
 
-        abstract ClassHierarchyPizza build();
+        abstract Pizza build();
 
         // subclasses override this method to return "this"
         protected abstract T self();
     }
 
-    ClassHierarchyPizza(Builder<?> builder) {
+    Pizza(Builder<?> builder) {
         toppings = builder.toppings.clone();
     }
 }

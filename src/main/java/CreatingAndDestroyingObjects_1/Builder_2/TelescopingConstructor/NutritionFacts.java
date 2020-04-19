@@ -1,6 +1,6 @@
-package CreatingAndDestroyingObjects_1.Builder_2;
+package CreatingAndDestroyingObjects_1.Builder_2.TelescopingConstructor;
 
-public class NutritionFactsWithTelescopingConstructor {
+public class NutritionFacts {
 
     // Nutrition Facts
     private final int servingSize;          // (mL)             required
@@ -10,23 +10,23 @@ public class NutritionFactsWithTelescopingConstructor {
     private final int sodium;               // (mg/serving)     optional
     private final int carbohydrate;         // (g/serving)      optional
 
-    public NutritionFactsWithTelescopingConstructor(int servingSize, int servings) {
+    public NutritionFacts(int servingSize, int servings) {
         this(servingSize, servings, 0);
     }
 
-    public NutritionFactsWithTelescopingConstructor(int servingSize, int servings, int calories) {
+    public NutritionFacts(int servingSize, int servings, int calories) {
         this(servingSize, servings, calories, 0);
     }
 
-    public NutritionFactsWithTelescopingConstructor(int servingSize, int servings, int calories, int fat) {
+    public NutritionFacts(int servingSize, int servings, int calories, int fat) {
         this(servingSize, servings, calories, fat, 0);
     }
 
-    public NutritionFactsWithTelescopingConstructor(int servingSize, int servings, int calories, int fat, int sodium) {
+    public NutritionFacts(int servingSize, int servings, int calories, int fat, int sodium) {
         this(servingSize, servings, calories, sodium, fat,  0);
     }
 
-    public NutritionFactsWithTelescopingConstructor(int servingSize, int servings, int calories, int fat, int sodium, int carbohydrate) {
+    public NutritionFacts(int servingSize, int servings, int calories, int fat, int sodium, int carbohydrate) {
         this.servingSize = servingSize;
         this.servings = servings;
         this.calories = calories;

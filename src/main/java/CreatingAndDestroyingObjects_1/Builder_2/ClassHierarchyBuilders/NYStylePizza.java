@@ -1,17 +1,17 @@
-package CreatingAndDestroyingObjects_1.Builder_2;
+package CreatingAndDestroyingObjects_1.Builder_2.ClassHierarchyBuilders;
 
 import java.util.Objects;
 
-public class CHConcreteNYPizza extends ClassHierarchyPizza {
+public class NYStylePizza extends Pizza {
     public enum Size { SMALL, MEDIUM, LARGE}
     private final Size size;
 
-    private CHConcreteNYPizza(Builder builder) {
+    private NYStylePizza(Builder builder) {
         super(builder);
         size = builder.size;
     }
 
-    public static class Builder extends ClassHierarchyPizza.Builder<Builder> {
+    public static class Builder extends Pizza.Builder<Builder> {
         private final Size size;
 
         public Builder(Size size) {
@@ -19,8 +19,8 @@ public class CHConcreteNYPizza extends ClassHierarchyPizza {
         }
 
         @Override
-        public CHConcreteNYPizza build() {
-            return new CHConcreteNYPizza(this);
+        public NYStylePizza build() {
+            return new NYStylePizza(this);
         }
 
         @Override

@@ -1,0 +1,154 @@
+# Item 6: Avoid Creating Unnecessary Objects
+
+It is better to reuse a single object instead of creating a new functionality equivalent
+object each time it is needed
+- reuse is faster (and more stylish)
+- immutable objects can ALWAYS be reused
+    - mutable objects can be used IF ONLY IF you know that they won't be modified
+
+## EXAMPLES 
+DON'T use new String()
+
+    EX: String s = new String("this is stupid");
+    
+DO use string literals
+
+    EX: String s = "this is not stupid";
+    
+---    
+avoid unnecessarily using constructors 
+- they always create new objects
+
+    EX: Boolean(String)
+    
+use Static Factory Methods 
+- they don't require creating new objects 
+
+    EX: Boolean.valueOf(String)
+
+---
+Avoid creating expensive objects repeatedly...
+- String.matches is the EASIEST way to check if a string matches a regex
+- BUT, it also internally creates a Pattern instance for the regex which is only used ONCE, and is then released for GC
+    - Creating Pattern instances is expensive, because the regex must be compiled into an FSM
+    
+
+    EX:
+    
+    static boolean isRomanNumeral(String s) {
+        return s.matches("^(?=.)M*(C[MD]|D?C{0.3})"
+            + "(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
+    }
+
+
+... instead try to cache them for reuse
+- explicitly compiling the regex into a Pattern instance 
+    - make it final (immutable)
+    - make it static (so it's only done once, and cached with all of the other static variables and every invocation of
+     isRomanNumeral() method will use the same instance)
+
+    
+    EX: 
+    
+    public class RomanNumerals {
+        private static final Pattern ROMAN = Pattern.compile(
+            "^(?=.)M*(C[MD]|D?C{0.3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
+        
+        static boolean isRomanNumeral(String s) {
+            return ROMAN.matcher(s).matches();
+        }    
+    }
+
+- NOTE: yes, if you never call the isRomanNumeral() method, then the Pattern was
+compiled unnecessarily. 
+    - While you CAN optionally LAZY LOAD/INIT the ROMAN field the first time it is
+    called, this sometimes complicates the implementation w/ no 
+    measurable perforamnce improvement
+    - When using LAZY INIT
+        - make sure the juice is worth the squeeze.
+    
+--- 
+Immutable Objects can OBVIOUSLY be reused, but there are other cases where it isn't
+as obvious
+
+ADAPTERS
+- (an adapter is an object that provides an alternative interface to some backing
+object that so that it conforms to the interface a client expects)
+    - Adapters have NO state. 
+    - There is rarely a need to create more than ONE instance of a given adapter
+    to a given backing object. 
+    
+EX: 
+- keySet() method of Map interface returns a Set view of the Map Object
+    - (consists of all of the the keys in the Map)
+    - every call to the keySet on a given map object may return the SAME Set instance
+    - even though it is a mutable object, all of the returned objects are functionally
+    identical. 
+    - when ONE returned object changes, so do all of the others, because they're all
+    backed by the same Map instance. 
+---
+PREFER primitives to BOXED primitives
+
+AUTOBOXING creates unnecessary objects
+- (Autoboxing allows devs to mix primitive and "boxed" primitive types)
+    - boxing/unboxing automatically as needed
+    - its also as slow as shit. 
+
+In the example below, the variable is a Long (instead of a long). 
+- this results in 2^31 unnecessary instances of Long
+    - once for eachtime i is added to sum. 
+    - this takes ~ 7 seconds to run (it takes ~ 500ms if you change the
+    variable to long sum)
+
+    EX:
+        private static long sum() {
+        
+            Long sum = 0L;
+            for (long i  = 0; i <= Integer.MAX_VALUE; i++) 
+                sum += i;
+            return sum;
+        }
+
+    
+NOTE: 
+- this doesn't mean that all object creation is evil
+    - small objects w/ constructors that do little explicit work are cheap. 
+    - objects DO provide
+        - CLARITY
+        - SIMPLICITY
+        - POWER
+        
+    - but if they are enormous, do a lot of work, have a lot of blocking code, 
+    then consider caching the objects for reuse. 
+    - (it's also a good idea to MEASURE it rather than guess.)
+---
+Avoid using OBJECT POOLS unless the objects in the pool are DEMONSTRABLY heavy weight
+- EX: 
+    - DATABASE CONNECTIONS are the clasic example of objects that can/should be 
+    pooled because the cost of establishing the connection is sufficiently high
+    that it makes sense for the objects to be reused. 
+    
+- Object Pools have PLENTY of downsides
+    - clutters code
+    - increases memory footprint
+    - decreases performance
+    
+Modern JVM Garbage Collections are more trustworthy than object pools of lightweight
+objects.
+---
+DEFENSIVE COPYING
+- "Circular Argument"
+    - "Don't create a new object when you should reuse an existing one"
+    - "Don't reuse an existing object when you should create a new one."
+    - How Do I Decide? 
+    
+The penalty for reusing an object when defensive copying is called for is FAR
+greater than the penalty for needlessly creating a duplicate object. 
+
+- Failing to make defensive copies (when required) 
+    - hard to solve bugs
+    - security holes
+- Creating Unnecessary Objects
+    - affects style and performance
+
+
