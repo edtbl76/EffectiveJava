@@ -1,0 +1,33 @@
+# Item 9: Prefer try-with-resources to try-finally
+Many libraries include resources that have to be closed using a close() method
+EX:
+- InputStream, OutputStream
+- java.sql.Connection
+
+This is also commonly overlooked. 
+- (if you remember item 8, the safety net for a missed close() are 
+finalizers and cleaners which aren't very reliable)
+
+## TRY-FINALLY
+- part of the issue w/ try finally blocks is that both of the separate blocks are
+capable of throwing exceptions. 
+    - if the try blocks fails for some condition having to do w/ the resource (i.e.
+    disk failure, socket failure), then the finally block is going to fail for 
+    the same reason.
+    - This is bad because the SECOND exception masks the first one. (The first 
+    exception is never going to show up in the stack trace.)\
+        - MAKES DEBUGGING HARDER
+        - you usually want to see the first exception rather than the first.
+        
+## TRY-WITH-RESOURCES
+- shorter, more readable
+- better diagnostics
+- automatically suppresses the "latter exceptions" in favor of the former
+    - which is the behavior we typically want.
+    - will suppress MULTIPLE exceptions
+    - in addition to be suppressed, they are displayed in the stack trace and annotated that they 
+    are suppressed
+        - this annotation gives you a clue as to where the problem is in the code (provided that you
+        know this is how try-with-resources works)
+    - NOTE:
+        (suppressed exceptions are also available from the 'throwable' via the getSuppressed() method)
