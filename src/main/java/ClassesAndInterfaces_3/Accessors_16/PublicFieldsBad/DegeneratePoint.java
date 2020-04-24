@@ -1,4 +1,4 @@
-package ClassesAndInterfaces_3.Accessors_16;
+package ClassesAndInterfaces_3.Accessors_16.PublicFieldsBad;
 
 public class DegeneratePoint {
     public double x;

@@ -1,10 +1,10 @@
-package ClassesAndInterfaces_3.Accessors_16;
+package ClassesAndInterfaces_3.Accessors_16.GettersAndSetters;
 
-public class PointWithSettersAndGetters {
+public class Point {
     private double x;
     private double y;
 
-    public PointWithSettersAndGetters(double x, double y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }

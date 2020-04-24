@@ -23,3 +23,10 @@ nothing wrong w/ exposing its data fields
     PRIVATE) or the enclosing class (PRIVATE NESTED CLASS)
         - any required/desired changes in representation can be made
         w/o impacting code external to the package
+1. While it is considered bad form for fields to be directly exposed...
+    - it is technically less of an issue w/ immutable fields because the
+    side effects induced through the violation of encapsulation are less
+    of an issue
+        - you STILL can't change representation w/o changing API
+        - you STILL can't take aux actions when a field is accessed
+        - you CAN enforce invariants
