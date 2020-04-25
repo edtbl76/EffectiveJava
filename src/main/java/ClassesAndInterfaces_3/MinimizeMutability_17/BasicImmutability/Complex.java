@@ -1,4 +1,4 @@
-package ClassesAndInterfaces_3.MinimizeMutability_17;
+package ClassesAndInterfaces_3.MinimizeMutability_17.BasicImmutability;
 
 /*
     Immutable Complex Number Class
