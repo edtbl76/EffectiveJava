@@ -63,6 +63,39 @@ primitive interface methods.
 
 The advantage is that extending the skeletal impl takes most of the work out of
 impl'ing an interface
+- skeletal ABCs provide the IMPL help of ABCs w/o imposing the constraints introduced
+by ABCs (or other classes) when used as type definitions.
+
+
+### SIMPLE IMPLEMENTATION
+A variation on a SKELETAL IMPL
+- impls an interface
+- designed for inheritance
+- it isn't abstract, it is the simplest possible working implementation
+
+### SIMULATED MULTIPLE INHERITANCE
+In most cases, implementors of interfaces /w skeletal IMPLs will use the skeletal
+implementation, however this is optional.
+- you still have access to any of the default methods in the interface
+- to gain access to the ABC, you use SIMULATED MULTIPLE INHERITANCE
+    - class that implements interface forwards invocations of interface methods
+    to a contained INSTANCE of a PRIVATE INNER CLASS that extends the SKELETAL
+    IMPL
+    - (this is a similar approach to using a decorator.)
+
+## WRITING SKELETAL IMPLS
+1. decide which methods in the interface are "primitives" in terms of 
+which the others can be impl'd
+    - these become the ABSTRACT METHODS in the SKELETAL IMPL
+1. provide default methods in the interface for ALL methods that can be impl'd
+directly on top of the primitives
+    - you can't provide defaults for Object methods 
+        - equals, hashCode, toString, clone
+1. if primitives default methods fulfill the interface, you're done. 
+    - there is no need for skeletal impl. 
+1. ...else write a class declared to impl the interface
+    - should implement all of the remaining interface methods
+    - may contain nonpublic members as necessary
 
 
 ## BEST PRACTICES
@@ -79,6 +112,7 @@ EX:
 | List | AbstractList | 
 ... and so on.
 
+- good documentation is essential to skeletal implementation.
 
     
        

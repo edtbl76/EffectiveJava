@@ -9,6 +9,10 @@ public class SomeImpl {
     static List<Integer> intArrayList(int [] array) {
         Objects.requireNonNull(array);
 
+        /*
+            This is an anonymous class, and it's probably grounds for a Lambda or method reference in some examples.
+            This is also an example of an ADAPTER>
+         */
         return new AbstractList<>() {
             @Override
             public Integer get(int index) {
