@@ -1,6 +1,7 @@
-package Generics_4.BoundedWildcards_31;
+package Generics_4.BoundedWildcards_31.BoundedWC;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EmptyStackException;
 
 public class Stack<E> {
@@ -24,6 +25,23 @@ public class Stack<E> {
 
          */
         elements = (E[]) new Object[DEFAULT_INITIAL_CAPACITY];
+    }
+
+    /*
+        This is our BOUNDED WILDCARD TYPE
+     */
+    public void pushAll(Iterable<? extends E> source) {
+        for (E e : source) {
+            push(e);
+        }
+    }
+
+    /*
+        And another
+     */
+    public void popAll(Collection<? super E> destination) {
+        while (!isEmpty())
+            destination.add(pop());
     }
 
     public void push(E e) {
