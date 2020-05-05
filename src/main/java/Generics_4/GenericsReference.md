@@ -11,3 +11,5 @@
 | Bounded Wildcard Type | List\<? extends Number> | 31
 | Generic Method | static \<E> List\<E> asList(E[] a) | 30 |
 | Type token | String.class | 33 |
+
+1. Type Parameters (Actual or Formal) can't be primitives
