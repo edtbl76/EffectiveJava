@@ -10,6 +10,8 @@ public class Union {
             PE Bounded WildCard Type
 
             NOTE: NEVER make return types Bounded WildCard Types
+            - The reason you avoid doing this is that it forces clients to use wildcards, making their code more
+            error prone/complicated.
      */
     public static <E> Set<E> union(Set<? extends E> set1, Set<? extends E> set2) {
         Set<E> result = new HashSet<>(set1);
