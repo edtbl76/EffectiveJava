@@ -41,5 +41,7 @@ annotation parameters represent valid input types with ONE CAVEAT
 representing the specificed input parameter is no longer present at
 runtime, the test runner throws a "TypeNotPresentException"
 
-
-
+ARRAY PARAMETERS <br>
+This is truly an extension of parameterized annotation. 
+- The syntax is flexible
+- optimized for single-element arrays. 
