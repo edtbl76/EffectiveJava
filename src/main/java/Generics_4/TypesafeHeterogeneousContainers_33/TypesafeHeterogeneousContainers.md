@@ -15,7 +15,7 @@ In all of these cases, the container is what is parameterized.
 ### ... But Sometimes You Don't. 
 More Flexible Use Case
 - EX: Database row can have an arbitrary number of columns, making type
-safety hard to achieve (becasue the columns are of varying types)
+safety hard to achieve (becausethe columns are of varying types)
 
 ## KEY vs. CONTAINER
 To achieve flexibility in typesafe use cases
