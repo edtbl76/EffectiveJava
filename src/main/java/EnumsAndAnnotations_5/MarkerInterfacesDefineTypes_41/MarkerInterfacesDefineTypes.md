@@ -70,4 +70,4 @@ consider using a marker interface
     - think about the use use cases above and choose what fits both
 - Pneumonic
     - "If you don't want to define a type, don't use an interface"
-    - "If you DO want to to define a type, then use an interface."
+    - "If you DO want to define a type, then use an interface."
