@@ -64,12 +64,36 @@ raw types.
         or
         
         words.sort(comparingInt(String::length));
-
+        
 ## BEST PRACTICES
 - Omit types of ALL Lambda parameters unless their presence makes the program clearer. 
     - If the compiler generates an error, THEN specify it.
+- since lambdas lack NAMES and documentation 
+    - don't use lambdas if:
+        - computation isn't self-explanatory
+        - or lambda exceeds a few lines
+            - 1 line = IDEAL
+            - 3 lines = MAX
+- Stick to Lambdas instead of anonymous classes unless you find yourself
+in a situation that requires special consideration (i.e. the limitations
+listed below.)
 
 ## ADVANTAGES
 - The addition of lambdas makes it practical to use function objects where it wouldn't have
 previously made sense. 
 
+## LIMITATIONS (WHEN ANON CLASSES ARE STILL NECESSARY)
+- Lambdas are limited to functional interfaces
+    - lambdas can't be used to create instance of an abstract class
+        - (You must use an anonymous class)
+    - lambdas are intended for interfaces w/ a SINGLE abstract method
+        - anon classes can be used to create instance of interfaces
+        with MULTIPLE abstract methods. 
+- a lambds can NOT contain a reference to itself
+    - "this" keyword contains a reference to the enclosing instance
+    - (in an anon class), "this" refers to the anon class instance.
+    - therefore, if you need an access to the function object from
+    inside the function body, you have ot use an anonymous class.
+- like anon classes, lambdas can't reliably serialize/deserialize
+across implementations
+    - DONT DO IT
