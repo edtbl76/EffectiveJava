@@ -105,6 +105,14 @@ objects (lambdas, method references)
 Generically speaking, if you aren't sure which works best:
 - try both and pick the winner!
 
+NOTE: In the examples, you'll see that:
+- stream versions of Anagrams reads the dictionary using Files.lines()
+- iterative versions of Anagrams use a scanner
+
+Files.lines() is actually a bit more powerful than a scanner
+- scanners silently swallows errors reading the file. 
+
+
 ### CodeBlocks Can Do Things That Function Objects Can't
 - you can read/modify any local variable in scope
     - lambdas can only read FINAL or EFFECTIVELY FINAL variables
