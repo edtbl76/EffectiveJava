@@ -94,6 +94,7 @@ clients.
 
 ## Validation of Stateful/Stored Parameters
 Validation of values that are stored for later use prevents the case where we "fail on access". 
+- NOTE: another perspective is that we are validating parameters prior to computation. 
 
 Example:
 - let's say we have a Static Factory method that takes an int[], but returns a List<Integer>. 
@@ -101,6 +102,32 @@ Example:
 attempts to USE the return value. 
     - this is later (maybe much moreso) than the point at which we passed in the invalid data. 
     - (i.e. )
+    
+Constructors
+- special case of validating stored parameters
+- this is the MOST critical application of this rule
+    - we should NEVER EVER create objects that violate class invariants. 
+    
+Exceptions: <br>
+In some cases, there are exceptions to the rule of paramter validation before computation
+- when validity check is prohibitively expensive/impractical AND the check is performed implicitly during the c
+computation
+
+    EX:
+        Given a method that sorts a lists of objects (i.e. Collections.sort(List<>))
+        - all of the lists must be mutually comparable to one another. 
+        - during the process of sorting the list, we will be comparing each object to another object in the list
+        - If at any time two objects are NOT comparable, the comparison will throw "ClassCastException"
+        
+DOWNSIDE of implicit validation:
+- implicit validation can result in loss of FAILURE ATOMICITY (Item 76)
+    - when performing explicit validation, we define the exception that can be thrown if something goes wrong
+    - when performing implicit validation, the exception is determined by the computation being performed, so 
+    there is a chance that the exception thrown by an implicit validation violation will NOT be the same exception (or 
+    one of) that is defined as a throwable by the method being called to perform the computation. 
+    - WORKAROUND
+        - use EXCEPTION TRANSLATION (Item 73) to translate the "Natural Exception" (the one thrown implicitly) into 
+        the documented exception 
     
 ## BEST PRACTICES
 - Use Objects.requireNonNull() instead of performing "manual null checks anymore."
@@ -111,6 +138,18 @@ attempts to USE the return value.
             
     - NOTE: This can also ignore return values and be used as a "free-standing null check" where that
 suits your needs. 
-- Use range-checking methods:
+- Use range-checking methods
+- avoid arbitrary restrictions on parameters
+    - methods should be designed as general as it is practical to make them
+    - do NOT overconstrain.
+    
+        
+   
+    
+    
+    
+        
+    
+    
 
         
