@@ -141,7 +141,7 @@ suits your needs.
 - Use range-checking methods
 - avoid arbitrary restrictions on parameters
     - methods should be designed as general as it is practical to make them
-    - do NOT overconstrain.
+    - do not over-constrain methods with overly complicated and granular parameter validation code 
     
         
    
