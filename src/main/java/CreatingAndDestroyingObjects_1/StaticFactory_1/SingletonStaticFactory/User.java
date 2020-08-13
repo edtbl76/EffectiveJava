@@ -1,5 +1,7 @@
 package CreatingAndDestroyingObjects_1.StaticFactory_1.SingletonStaticFactory;
 
+import java.util.Collections;
+
 public class User {
 
     private static volatile User instance = null;

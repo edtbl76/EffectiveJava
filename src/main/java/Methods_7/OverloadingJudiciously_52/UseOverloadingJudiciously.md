@@ -67,8 +67,28 @@ Constructors are the exception to the rule
 
 Constructors can't be overridden, so there are no concerns in terms of conflicts. 
 
-## Safe
-
+## Constructor Overloadign Safety Measures
+- when exporting overloadings w/ the same number of parameters it is recommended that we try to 
+avoid confusion/obscurity between the overloads
+    - It is helpful when one of the parameters is "radically different" between the overloadings
+        - (this means that "it is clearly impossible to cast any
+        non-null expression to both types)
+        - this GUARANTEES that the overloading is fully determined at runtime, because the
+        "radically different" parameters can't be confused or "matched" at compile-time
+        
+    - See AutoBoxing.SetList and AutoBoxing.SetListSolution to review
+    how/why AutoBoxing presents a challenge 
+        - Before Generics and AutoBoxing, the two remove() overloads of
+        List were radically different. 
+        - Afterwards, they were NO LONGER RADICALLY DIFFERENT. 
+        - The point? 
+            - adding two very cool and powerful features (Generics and Autoboxing)
+            actually "broke" one of the most widely used interfaces in the 
+            entire java language. 
+            
+    - prefer UNRELEATED classes
+        - Two distinct classes are set to be UNRELATED if neither class isa  
+        descendant of the other. 
 
 ## BEST PRACTICES
 - avoid overloading when possible. 
@@ -78,7 +98,9 @@ Constructors can't be overridden, so there are no concerns in terms of conflicts
 - NEVER overload at all when using varargs
     - see Item 53 for the exception to the rule
 - overload-by-name is a way to use naming variations to avoid overloading pitfalls
-
+- do NOT overload methods to take different functional interfaces in 
+the same argument position. 
+    - (different functional interfaces are NOT radically different)
 
 
     
