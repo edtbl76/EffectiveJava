@@ -82,3 +82,16 @@ BENEFITS OF EXCEPTION CHAINING
 - the cause's stack track is integrated into the higher-level exception
 
 
+### Exception Chaining isn't a Golden Hammer
+- don't overuse exception translation
+    - even if it IS better than "mindless propagation of exceptions from lower layers"
+
+## BEST PRACTICES
+1. best way to deal w/ exceptions from lower-layers is to avoid them
+    - (easiest "umbrella" is to validate parameters of higher level methods before passing them to 
+    lower layers)
+1. If this isn't possible
+    - provide insulation to callers of higher-level methods from lower level problems
+    - logging!
+        - this is a great enforcement point for logging, because it captures low-level details that
+        can aid debugging, without dirtying API/high-level details/client code
